@@ -194,13 +194,17 @@ Build Command
 npm run build
 
 Output Directory
-dist
+dist 
 
-👤 Autor
+---
 
-Desenvolvido por Kelvin Augusto 🚀
-📌 Front-end Developer
+* 👤 Autor
 
-GitHub: https://github.com/kelvin-dev23
+* Desenvolvido por Kelvin Augusto 🚀
+*📌 Front-end Developer
 
-LinkedIn: https://www.linkedin.com/in/kelvin-augusto-dev
+*GitHub:https://github.com/kelvin-dev23
+
+*LinkedIn: https://www.linkedin.com/in/kelvin-augusto-dev
+
+
