@@ -195,3 +195,12 @@ npm run build
 
 Output Directory
 dist
+
+👤 Autor
+
+Desenvolvido por Kelvin Augusto 🚀
+📌 Front-end Developer
+
+GitHub: https://github.com/kelvin-dev23
+
+LinkedIn: https://www.linkedin.com/in/kelvin-augusto-dev
