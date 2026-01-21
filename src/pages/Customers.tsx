@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useToast } from "../ui/useToast";
 
 import {
   createCustomer,
@@ -17,7 +18,6 @@ import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Card, CardContent, CardHeader } from "../ui/Card";
 import { Input } from "../ui/Input";
-import { useToast } from "../ui/useToast";
 
 export function Customers() {
   const qc = useQueryClient();
@@ -36,16 +36,16 @@ export function Customers() {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ["customers"] });
       toast({
-        variant: "success",
         title: "Cliente criado",
-        message: "O cliente foi cadastrado com sucesso.",
+        message: "Cliente cadastrado com sucesso.",
+        variant: "success",
       });
     },
-    onError: (e) => {
+    onError: () => {
       toast({
+        title: "Erro ao criar",
+        message: "Não foi possível cadastrar o cliente. Tente novamente.",
         variant: "error",
-        title: "Erro ao criar cliente",
-        message: (e as Error).message,
       });
     },
   });
@@ -54,18 +54,17 @@ export function Customers() {
     mutationFn: updateCustomer,
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ["customers"] });
-      setEditing(null);
       toast({
-        variant: "success",
         title: "Cliente atualizado",
         message: "Alterações salvas com sucesso.",
+        variant: "success",
       });
     },
-    onError: (e) => {
+    onError: () => {
       toast({
+        title: "Erro ao atualizar",
+        message: "Não foi possível salvar as alterações.",
         variant: "error",
-        title: "Erro ao atualizar cliente",
-        message: (e as Error).message,
       });
     },
   });
@@ -75,16 +74,16 @@ export function Customers() {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ["customers"] });
       toast({
-        variant: "info",
-        title: "Cliente removido",
-        message: "Cliente excluído com sucesso.",
+        title: "Cliente excluído",
+        message: "Registro removido com sucesso.",
+        variant: "success",
       });
     },
-    onError: (e) => {
+    onError: () => {
       toast({
+        title: "Erro ao excluir",
+        message: "Não foi possível remover o cliente.",
         variant: "error",
-        title: "Erro ao excluir cliente",
-        message: (e as Error).message,
       });
     },
   });

@@ -5,7 +5,7 @@ import { RouterProvider } from "react-router-dom";
 
 import { router } from "./app/routes/router";
 import "./index.css";
-import { ToastProvider } from "./ui/ToastProvider";
+import { ToastProvider } from "./ui/ToastProvider"; // ajuste o caminho se precisar
 
 const queryClient = new QueryClient();
 
