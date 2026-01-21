@@ -142,69 +142,62 @@ O projeto foi pensado com divisão clara por responsabilidade:
 
 ---
 
-# ⚙️ Como rodar localmente
+📁 Estrutura do projeto
+src/
+ ├─ app/
+ │  ├─ layouts/
+ │  ├─ routes/
+ ├─ pages/              # telas do sistema
+ ├─ services/           # "API" fake / localStorage
+ ├─ store/              # Zustand (auth, etc.)
+ ├─ ui/                 # componentes base
+ ├─ features/           # schemas/regras por domínio
+ ├─ index.css
+ ├─ main.tsx
+ └─ App.tsx
 
-### 1) Clonar
+## ⚙️ Como rodar localmente
+
+### 1) Clonar o repositório
 ```bash
-git clone <URL_DO_SEU_REPOSITORIO>
-
----
-
-Acessar pasta:
+git clone https://github.com/kelvin-dev23/erp-system.git
 cd erp-frontend
-
----
-
-Instalar dependências:
+ ```
+2) Instalar dependências
 npm install
 
----
+3) Rodar em desenvolvimento:
 
-Rodar dev:
 npm run dev
 
----
-
 Acesse:
-http://localhost:5173
-
----
+➡️ http://localhost:5173
 
 ✅ Qualidade / QA
-
-Lint:
-
+Lint
 npm run lint
 
-
-Build:
-
+Build (produção)
 npm run build
 
-
-Preview:
-
+Preview do build
 npm run preview
-
----
 
 ☁️ Deploy (Vercel)
 
-Build Command
-npm run build
+Framework Preset: Vite
+Build Command: npm run build
+Output Directory: dist
 
-Output Directory
-dist 
+Se o Vercel pedir a pasta do projeto:
 
----
+Root Directory: erp-frontend
 
-* 👤 Autor
+👤 Autor
 
-* Desenvolvido por Kelvin Augusto 🚀
-*📌 Front-end Developer
+Desenvolvido por Kelvin Augusto 🚀
+📌 Front-end Developer
 
-*GitHub:https://github.com/kelvin-dev23
+GitHub: https://github.com/kelvin-dev23
 
-*LinkedIn: https://www.linkedin.com/in/kelvin-augusto-dev
-
-
+LinkedIn: https://www.linkedin.com/in/kelvin-augusto-dev
