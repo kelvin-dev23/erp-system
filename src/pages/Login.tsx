@@ -77,7 +77,9 @@ export function Login() {
           Entrar
         </button>
 
-        <small style={{ textAlign: "center", color: "#64748b" }}>(Login)</small>
+        <small style={{ textAlign: "center", color: "#64748b" }}>
+          (Login: kelvin, Senha: 123)
+        </small>
       </form>
     </div>
   );

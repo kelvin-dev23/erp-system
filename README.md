@@ -15,7 +15,7 @@
 ---
 
 ## 🌍 Demo (Vercel)
-🔗 **Em breve:** *(adicione aqui quando publicar)*
+🔗 (https://erp-system-livid.vercel.app/)
 
 ---
 
@@ -163,7 +163,8 @@ src/
 git clone https://github.com/kelvin-dev23/erp-system.git
 cd erp-frontend
  ```
-2) Instalar dependências
+2) Instalar dependências:
+
 npm install
 
 3) Rodar em desenvolvimento:
@@ -174,13 +175,17 @@ Acesse:
 ➡️ http://localhost:5173
 
 ✅ Qualidade / QA
-Lint
+
+Lint:
+git 
 npm run lint
 
-Build (produção)
+Build:
+
 npm run build
 
-Preview do build
+Preview do build:
+
 npm run preview
 
 ☁️ Deploy (Vercel)
