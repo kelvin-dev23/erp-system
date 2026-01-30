@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   CartesianGrid,
@@ -9,8 +10,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { listReceivables } from "../features/finance/financeService";
+import type { Receivable } from "../features/finance/types";
 
-import { useMemo } from "react";
 import { getDashboard } from "../services/dashboardApi";
 import { listProducts, type Product } from "../services/productsApi";
 
@@ -29,6 +31,25 @@ export function Dashboard() {
     queryKey: ["products", "dashboard-alerts"],
     queryFn: () => listProducts(""),
   });
+
+  const [receivables, setReceivables] = useState<Receivable[]>([]);
+  useEffect(() => {
+    (async () => {
+      const data = await listReceivables();
+      setReceivables(data);
+    })();
+  }, []);
+  const financeTotals = useMemo(() => {
+    const received = receivables
+      .filter((i) => i.status === "RECEIVED")
+      .reduce((acc, i) => acc + i.amount, 0);
+
+    const pending = receivables
+      .filter((i) => i.status === "PENDING" || i.status === "OVERDUE")
+      .reduce((acc, i) => acc + i.amount, 0);
+
+    return { received, pending };
+  }, [receivables]);
 
   const products = useMemo(
     () => (qProducts.data ?? []) as Product[],
@@ -172,6 +193,29 @@ export function Dashboard() {
                   Nenhuma venda recente.
                 </div>
               )}
+              <Card>
+                <CardContent className="p-5">
+                  <p className="text-sm text-slate-500">Recebido</p>
+                  <p className="mt-1 text-2xl font-semibold">
+                    {financeTotals.received.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-5">
+                  <p className="text-sm text-slate-500">Pendente</p>
+                  <p className="mt-1 text-2xl font-semibold">
+                    {financeTotals.pending.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           </CardContent>
         </Card>
