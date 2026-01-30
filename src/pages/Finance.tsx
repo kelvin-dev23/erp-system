@@ -114,7 +114,9 @@ export function Finance() {
                   items.map((r) => (
                     <tr
                       key={r.id}
-                      className="border-b border-slate-100 text-sm"
+                      className={`border-b border-slate-100 text-sm ${
+                        r.status === "OVERDUE" ? "bg-red-50" : ""
+                      }`}
                     >
                       <td className="px-5 py-4">{r.id}</td>
                       <td className="px-5 py-4">{r.customer}</td>
