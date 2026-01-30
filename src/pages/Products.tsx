@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { ActionsMenu } from "../ui/ActionsMenu";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { EmptyState } from "../ui/EmptyState";
 import { TableSkeleton } from "../ui/TableSkeleton";
@@ -321,14 +322,19 @@ export function Products() {
                               Editar
                             </Button>
 
-                            <Button
-                              variant="danger"
-                              size="sm"
-                              onClick={() => handleDelete(p.id)}
-                              loading={deleteMut.isPending}
-                            >
-                              Excluir
-                            </Button>
+                            <ActionsMenu
+                              actions={[
+                                {
+                                  label: "Editar",
+                                  onClick: () => startEdit(p),
+                                },
+                                {
+                                  label: "Excluir",
+                                  danger: true,
+                                  onClick: () => handleDelete(p.id),
+                                },
+                              ]}
+                            />
                           </div>
                         </td>
                       </tr>

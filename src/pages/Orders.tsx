@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
+import { ActionsMenu } from "../ui/ActionsMenu";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { EmptyState } from "../ui/EmptyState";
 import { TableSkeleton } from "../ui/TableSkeleton";
@@ -260,14 +261,15 @@ export function Orders() {
                               Ver itens
                             </Button>
 
-                            <Button
-                              variant="danger"
-                              size="sm"
-                              onClick={() => handleDelete(o.id)}
-                              loading={deleteMut.isPending}
-                            >
-                              Excluir
-                            </Button>
+                            <ActionsMenu
+                              actions={[
+                                {
+                                  label: "Excluir",
+                                  danger: true,
+                                  onClick: () => handleDelete(o.id),
+                                },
+                              ]}
+                            />
                           </div>
                         </td>
                       </tr>

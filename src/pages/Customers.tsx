@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { ActionsMenu } from "../ui/ActionsMenu";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { EmptyState } from "../ui/EmptyState";
 import { TableSkeleton } from "../ui/TableSkeleton";
@@ -247,14 +248,19 @@ export function Customers() {
                               Editar
                             </Button>
 
-                            <Button
-                              variant="danger"
-                              size="sm"
-                              onClick={() => handleDelete(c.id)}
-                              loading={deleteMut.isPending}
-                            >
-                              Excluir
-                            </Button>
+                            <ActionsMenu
+                              actions={[
+                                {
+                                  label: "Editar",
+                                  onClick: () => startEdit(c),
+                                },
+                                {
+                                  label: "Excluir",
+                                  danger: true,
+                                  onClick: () => handleDelete(c.id),
+                                },
+                              ]}
+                            />
                           </div>
                         </td>
                       </tr>
