@@ -4,6 +4,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 
 import { Customers } from "../../pages/Customers";
 import { Dashboard } from "../../pages/Dashboard";
+import { Finance } from "../../pages/Finance";
 import { Login } from "../../pages/Login";
 import { Orders } from "../../pages/Orders";
 import { Products } from "../../pages/Products";
@@ -25,6 +26,8 @@ export const router = createBrowserRouter([
       { path: "products", element: <Products /> },
       { path: "customers", element: <Customers /> },
       { path: "orders", element: <Orders /> },
+      { path: "finance", element: <Finance /> },
+
       { path: "/reports", element: <Reports /> },
     ],
   },

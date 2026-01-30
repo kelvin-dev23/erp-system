@@ -22,6 +22,7 @@ export function AppLayout() {
       { to: "/customers", label: "Clientes", icon: "👤" },
       { to: "/orders", label: "Vendas", icon: "🧾" },
       { to: "/reports", label: "Relatórios", icon: "📈" },
+      { to: "/finance", label: "Financeiro", icon: "💰" },
     ],
     [],
   );
