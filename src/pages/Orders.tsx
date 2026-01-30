@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { EmptyState } from "../ui/EmptyState";
+import { TableSkeleton } from "../ui/TableSkeleton";
 
 import {
   createOrder,
@@ -29,6 +32,7 @@ function statusBadgeVariant(status: OrderStatus) {
 export function Orders() {
   const qc = useQueryClient();
   const { toast } = useToast();
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
@@ -113,10 +117,8 @@ export function Orders() {
     },
   });
 
-  async function handleDelete(id: string) {
-    const ok = confirm("Excluir esta venda?");
-    if (!ok) return;
-    await deleteMut.mutateAsync(id);
+  function handleDelete(id: string) {
+    setDeleteId(id);
   }
 
   return (
@@ -136,6 +138,20 @@ export function Orders() {
               placeholder="Buscar por id, cliente ou status..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+            />
+            <ConfirmDialog
+              open={Boolean(deleteId)}
+              title="Excluir cliente?"
+              message="Essa ação não pode ser desfeita."
+              confirmLabel="Excluir"
+              cancelLabel="Cancelar"
+              loading={deleteMut.isPending}
+              onClose={() => setDeleteId(null)}
+              onConfirm={async () => {
+                if (!deleteId) return;
+                await deleteMut.mutateAsync(deleteId);
+                setDeleteId(null);
+              }}
             />
           </div>
 
@@ -158,7 +174,9 @@ export function Orders() {
 
         <CardContent className="p-0">
           {isLoading && (
-            <div className="p-5 text-sm text-slate-600">Carregando...</div>
+            <table className="w-full">
+              <TableSkeleton rows={5} cols={6} />
+            </table>
           )}
 
           {isError && (
@@ -181,78 +199,80 @@ export function Orders() {
                 </thead>
 
                 <tbody className="divide-y divide-slate-100">
-                  {items.length === 0 && (
+                  {items.length === 0 ? (
                     <tr>
-                      <td
-                        className="px-5 py-10 text-center text-slate-500"
-                        colSpan={5}
-                      >
-                        Nenhuma venda encontrada.
+                      <td colSpan={6}>
+                        <EmptyState
+                          title="Nenhuma venda encontrada"
+                          description="Tente ajustar a busca ou cadastre uma nova venda."
+                          actionLabel="+ Nova venda"
+                          onAction={() => setOpen(true)}
+                        />
                       </td>
                     </tr>
+                  ) : (
+                    items.map((o) => (
+                      <tr key={o.id} className="hover:bg-slate-50/60">
+                        <td className="px-5 py-4 font-semibold text-slate-900">
+                          {o.id}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-700">
+                          {o.customerName}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-900">
+                          {money(o.total)}
+                        </td>
+
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-3">
+                            <Badge variant={statusBadgeVariant(o.status)}>
+                              {o.status}
+                            </Badge>
+
+                            <select
+                              value={o.status}
+                              onChange={(e) =>
+                                statusMut.mutate({
+                                  id: o.id,
+                                  status: e.target.value as OrderStatus,
+                                })
+                              }
+                              className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
+                            >
+                              <option value="Pendente">Pendente</option>
+                              <option value="Pago">Pago</option>
+                              <option value="Cancelado">Cancelado</option>
+                            </select>
+                          </div>
+                        </td>
+
+                        <td className="px-5 py-4">
+                          <div className="flex gap-2">
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() =>
+                                setItemsOpen({ id: o.id, items: o.items })
+                              }
+                            >
+                              Ver itens
+                            </Button>
+
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() => handleDelete(o.id)}
+                              loading={deleteMut.isPending}
+                            >
+                              Excluir
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
                   )}
-
-                  {items.map((o) => (
-                    <tr key={o.id} className="hover:bg-slate-50/60">
-                      <td className="px-5 py-4 font-semibold text-slate-900">
-                        {o.id}
-                      </td>
-
-                      <td className="px-5 py-4 text-slate-700">
-                        {o.customerName}
-                      </td>
-
-                      <td className="px-5 py-4 text-slate-900">
-                        {money(o.total)}
-                      </td>
-
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-3">
-                          <Badge variant={statusBadgeVariant(o.status)}>
-                            {o.status}
-                          </Badge>
-
-                          <select
-                            value={o.status}
-                            onChange={(e) =>
-                              statusMut.mutate({
-                                id: o.id,
-                                status: e.target.value as OrderStatus,
-                              })
-                            }
-                            className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
-                          >
-                            <option value="Pendente">Pendente</option>
-                            <option value="Pago">Pago</option>
-                            <option value="Cancelado">Cancelado</option>
-                          </select>
-                        </div>
-                      </td>
-
-                      <td className="px-5 py-4">
-                        <div className="flex gap-2">
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() =>
-                              setItemsOpen({ id: o.id, items: o.items })
-                            }
-                          >
-                            Ver itens
-                          </Button>
-
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={() => handleDelete(o.id)}
-                            loading={deleteMut.isPending}
-                          >
-                            Excluir
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
                 </tbody>
               </table>
             </div>

@@ -3,6 +3,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { EmptyState } from "../ui/EmptyState";
+import { TableSkeleton } from "../ui/TableSkeleton";
 import { useToast } from "../ui/useToast";
 
 import {
@@ -25,6 +28,7 @@ export function Customers() {
 
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Customer | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["customers", search],
@@ -119,10 +123,8 @@ export function Customers() {
     }
   }
 
-  async function handleDelete(id: string) {
-    const ok = confirm("Tem certeza que deseja excluir este cliente?");
-    if (!ok) return;
-    await deleteMut.mutateAsync(id);
+  function handleDelete(id: string) {
+    setDeleteId(id);
   }
 
   return (
@@ -141,6 +143,20 @@ export function Customers() {
               placeholder="Buscar por nome, doc ou email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+            />
+            <ConfirmDialog
+              open={Boolean(deleteId)}
+              title="Excluir cliente?"
+              message="Essa ação não pode ser desfeita."
+              confirmLabel="Excluir"
+              cancelLabel="Cancelar"
+              loading={deleteMut.isPending}
+              onClose={() => setDeleteId(null)}
+              onConfirm={async () => {
+                if (!deleteId) return;
+                await deleteMut.mutateAsync(deleteId);
+                setDeleteId(null);
+              }}
             />
           </div>
 
@@ -163,7 +179,9 @@ export function Customers() {
 
         <CardContent className="p-0">
           {isLoading && (
-            <div className="p-5 text-sm text-slate-600">Carregando...</div>
+            <table className="w-full">
+              <TableSkeleton rows={5} cols={6} />
+            </table>
           )}
 
           {isError && (
@@ -187,57 +205,61 @@ export function Customers() {
                 </thead>
 
                 <tbody className="divide-y divide-slate-100">
-                  {items.length === 0 && (
+                  {items.length === 0 ? (
                     <tr>
-                      <td
-                        className="px-5 py-10 text-center text-slate-500"
-                        colSpan={6}
-                      >
-                        Nenhum cliente encontrado.
+                      <td colSpan={6}>
+                        <EmptyState
+                          title="Nenhum cliente encontrado"
+                          description="Tente ajustar a busca ou cadastre um novo cliente."
+                          actionLabel="+ Novo cliente"
+                          onAction={startCreate}
+                        />
                       </td>
                     </tr>
+                  ) : (
+                    items.map((c) => (
+                      <tr key={c.id} className="hover:bg-slate-50/60">
+                        <td className="px-5 py-4 font-medium text-slate-900">
+                          {c.name}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-600">
+                          {c.document}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-600">{c.email}</td>
+
+                        <td className="px-5 py-4 text-slate-600">{c.phone}</td>
+
+                        <td className="px-5 py-4">
+                          <Badge variant={c.active ? "success" : "danger"}>
+                            {c.active ? "Ativo" : "Inativo"}
+                          </Badge>
+                        </td>
+
+                        <td className="px-5 py-4">
+                          <div className="flex gap-2">
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => startEdit(c)}
+                            >
+                              Editar
+                            </Button>
+
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() => handleDelete(c.id)}
+                              loading={deleteMut.isPending}
+                            >
+                              Excluir
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
                   )}
-
-                  {items.map((c) => (
-                    <tr key={c.id} className="hover:bg-slate-50/60">
-                      <td className="px-5 py-4 font-medium text-slate-900">
-                        {c.name}
-                      </td>
-
-                      <td className="px-5 py-4 text-slate-600">{c.document}</td>
-
-                      <td className="px-5 py-4 text-slate-600">{c.email}</td>
-
-                      <td className="px-5 py-4 text-slate-600">{c.phone}</td>
-
-                      <td className="px-5 py-4">
-                        <Badge variant={c.active ? "success" : "danger"}>
-                          {c.active ? "Ativo" : "Inativo"}
-                        </Badge>
-                      </td>
-
-                      <td className="px-5 py-4">
-                        <div className="flex gap-2">
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => startEdit(c)}
-                          >
-                            Editar
-                          </Button>
-
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={() => handleDelete(c.id)}
-                            loading={deleteMut.isPending}
-                          >
-                            Excluir
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
                 </tbody>
               </table>
             </div>
@@ -245,7 +267,6 @@ export function Customers() {
         </CardContent>
       </Card>
 
-      {/* Modal */}
       {editing && (
         <CustomerForm
           key={editing.id || "new"}

@@ -1,6 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { EmptyState } from "../ui/EmptyState";
+import { TableSkeleton } from "../ui/TableSkeleton";
 import { useToast } from "../ui/useToast";
 
 import { useForm } from "react-hook-form";
@@ -38,6 +41,7 @@ export function Products() {
   const qc = useQueryClient();
   const location = useLocation();
   const { toast } = useToast();
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const [search, setSearch] = useState("");
   const [onlyAlerts, setOnlyAlerts] = useState(() => {
@@ -152,10 +156,8 @@ export function Products() {
     }
   }
 
-  async function handleDelete(id: string) {
-    const ok = confirm("Tem certeza que deseja excluir este produto?");
-    if (!ok) return;
-    await deleteMut.mutateAsync(id);
+  function handleDelete(id: string) {
+    setDeleteId(id);
   }
 
   return (
@@ -175,6 +177,20 @@ export function Products() {
               placeholder="Buscar por nome ou SKU..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+            />
+            <ConfirmDialog
+              open={Boolean(deleteId)}
+              title="Excluir cliente?"
+              message="Essa ação não pode ser desfeita."
+              confirmLabel="Excluir"
+              cancelLabel="Cancelar"
+              loading={deleteMut.isPending}
+              onClose={() => setDeleteId(null)}
+              onConfirm={async () => {
+                if (!deleteId) return;
+                await deleteMut.mutateAsync(deleteId);
+                setDeleteId(null);
+              }}
             />
           </div>
 
@@ -223,7 +239,9 @@ export function Products() {
 
         <CardContent className="p-0">
           {isLoading && (
-            <div className="p-5 text-sm text-slate-600">Carregando...</div>
+            <table className="w-full">
+              <TableSkeleton rows={5} cols={6} />
+            </table>
           )}
 
           {isError && (
@@ -247,73 +265,75 @@ export function Products() {
                 </thead>
 
                 <tbody className="divide-y divide-slate-100">
-                  {filtered.length === 0 && (
+                  {items.length === 0 ? (
                     <tr>
-                      <td
-                        className="px-5 py-10 text-center text-slate-500"
-                        colSpan={6}
-                      >
-                        Nenhum produto encontrado.
+                      <td colSpan={6}>
+                        <EmptyState
+                          title="Nenhum produto encontrado"
+                          description="Tente ajustar a busca ou cadastre um novo produto."
+                          actionLabel="+ Novo produto"
+                          onAction={startCreate}
+                        />
                       </td>
                     </tr>
+                  ) : (
+                    items.map((p) => (
+                      <tr key={p.id} className={rowClass(p)}>
+                        <td className="px-5 py-4 font-medium text-slate-900">
+                          {p.name}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-600">{p.sku}</td>
+
+                        <td className="px-5 py-4 text-slate-900">
+                          {money(p.price)}
+                        </td>
+
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-slate-900">
+                              {p.stock}
+                            </span>
+
+                            {p.stock === 0 && (
+                              <Badge variant="danger">Sem estoque</Badge>
+                            )}
+
+                            {p.stock > 0 && p.stock <= 5 && (
+                              <Badge variant="warning">Baixo</Badge>
+                            )}
+                          </div>
+                        </td>
+
+                        <td className="px-5 py-4">
+                          <Badge variant={p.active ? "success" : "danger"}>
+                            {p.active ? "Ativo" : "Inativo"}
+                          </Badge>
+                        </td>
+
+                        <td className="px-5 py-4">
+                          <div className="flex gap-2">
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => startEdit(p)}
+                            >
+                              Editar
+                            </Button>
+
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() => handleDelete(p.id)}
+                              loading={deleteMut.isPending}
+                            >
+                              Excluir
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
                   )}
-
-                  {filtered.map((p) => (
-                    <tr key={p.id} className={rowClass(p)}>
-                      <td className="px-5 py-4 font-medium text-slate-900">
-                        {p.name}
-                      </td>
-
-                      <td className="px-5 py-4 text-slate-600">{p.sku}</td>
-
-                      <td className="px-5 py-4 text-slate-900">
-                        {money(p.price)}
-                      </td>
-
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-slate-900">
-                            {p.stock}
-                          </span>
-
-                          {p.stock === 0 && (
-                            <Badge variant="danger">Sem estoque</Badge>
-                          )}
-
-                          {p.stock > 0 && p.stock <= 5 && (
-                            <Badge variant="warning">Baixo</Badge>
-                          )}
-                        </div>
-                      </td>
-
-                      <td className="px-5 py-4">
-                        <Badge variant={p.active ? "success" : "danger"}>
-                          {p.active ? "Ativo" : "Inativo"}
-                        </Badge>
-                      </td>
-
-                      <td className="px-5 py-4">
-                        <div className="flex gap-2">
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => startEdit(p)}
-                          >
-                            Editar
-                          </Button>
-
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={() => handleDelete(p.id)}
-                            loading={deleteMut.isPending}
-                          >
-                            Excluir
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
                 </tbody>
               </table>
             </div>
