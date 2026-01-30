@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ActionsMenu } from "../ui/ActionsMenu";
+import { Breadcrumb } from "../ui/Breadcrumb";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { EmptyState } from "../ui/EmptyState";
 import { TableSkeleton } from "../ui/TableSkeleton";
@@ -166,6 +167,8 @@ export function Products() {
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div>
+          <Breadcrumb items={[{ label: "Dashboard" }, { label: "Produtos" }]} />
+
           <h1 className="text-xl font-semibold text-slate-900">📦 Produtos</h1>
           <p className="text-sm text-slate-500">
             Cadastre e gerencie seus produtos e estoque.

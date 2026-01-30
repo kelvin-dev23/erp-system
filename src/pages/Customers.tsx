@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ActionsMenu } from "../ui/ActionsMenu";
+import { Breadcrumb } from "../ui/Breadcrumb";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { EmptyState } from "../ui/EmptyState";
 import { TableSkeleton } from "../ui/TableSkeleton";
@@ -132,6 +133,8 @@ export function Customers() {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div>
+          <Breadcrumb items={[{ label: "Dashboard" }, { label: "Clientes" }]} />
+
           <h1 className="text-xl font-semibold text-slate-900">👤 Clientes</h1>
           <p className="text-sm text-slate-500">
             Gerencie clientes, documentos e contatos.

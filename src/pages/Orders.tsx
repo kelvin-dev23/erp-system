@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { ActionsMenu } from "../ui/ActionsMenu";
+import { Breadcrumb } from "../ui/Breadcrumb";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { EmptyState } from "../ui/EmptyState";
 import { TableSkeleton } from "../ui/TableSkeleton";
@@ -127,6 +128,8 @@ export function Orders() {
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div>
+          <Breadcrumb items={[{ label: "Dashboard" }, { label: "Vendas" }]} />
+
           <h1 className="text-xl font-semibold text-slate-900">🧾 Vendas</h1>
           <p className="text-sm text-slate-500">
             Registre vendas e acompanhe status e itens.
