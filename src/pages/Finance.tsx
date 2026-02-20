@@ -84,82 +84,84 @@ export function Finance() {
 
       <Card>
         <CardContent className="p-0">
-          <table className="w-full">
-            <thead className="border-b border-slate-200">
-              <tr className="text-left text-sm text-slate-500">
-                <th className="px-5 py-3">ID</th>
-                <th className="px-5 py-3">Cliente</th>
-                <th className="px-5 py-3">Descrição</th>
-                <th className="px-5 py-3">Venc.</th>
-                <th className="px-5 py-3">Valor</th>
-                <th className="px-5 py-3">Status</th>
-                <th className="px-5 py-3 text-right">Ações</th>
-              </tr>
-            </thead>
+          <div className="w-full overflow-x-auto">
+            <table className="min-w-full">
+              <thead className="border-b border-slate-200">
+                <tr className="text-left text-sm text-slate-500">
+                  <th className="px-5 py-3">ID</th>
+                  <th className="px-5 py-3">Cliente</th>
+                  <th className="px-5 py-3">Descrição</th>
+                  <th className="px-5 py-3">Venc.</th>
+                  <th className="px-5 py-3">Valor</th>
+                  <th className="px-5 py-3">Status</th>
+                  <th className="px-5 py-3 text-right">Ações</th>
+                </tr>
+              </thead>
 
-            {loading ? (
-              <TableSkeleton rows={5} cols={7} />
-            ) : (
-              <tbody>
-                {items.length === 0 ? (
-                  <tr>
-                    <td colSpan={7}>
-                      <EmptyState
-                        title="Nenhuma conta a receber"
-                        description="Quando você registrar vendas a prazo, elas aparecem aqui."
-                      />
-                    </td>
-                  </tr>
-                ) : (
-                  items.map((r) => (
-                    <tr
-                      key={r.id}
-                      className={`border-b border-slate-100 text-sm ${
-                        r.status === "OVERDUE" ? "bg-red-50" : ""
-                      }`}
-                    >
-                      <td className="px-5 py-4">{r.id}</td>
-                      <td className="px-5 py-4">{r.customer}</td>
-                      <td className="px-5 py-4">{r.description}</td>
-                      <td className="px-5 py-4">
-                        {new Date(r.dueDate).toLocaleDateString("pt-BR")}
-                      </td>
-
-                      <td className="px-5 py-4">{formatMoney(r.amount)}</td>
-                      <td className="px-5 py-4">
-                        <Badge
-                          variant={
-                            r.status === "RECEIVED"
-                              ? "success"
-                              : r.status === "OVERDUE"
-                                ? "danger"
-                                : "warning"
-                          }
-                        >
-                          {r.status === "RECEIVED"
-                            ? "Recebido"
-                            : r.status === "OVERDUE"
-                              ? "Vencido"
-                              : "Pendente"}
-                        </Badge>
-                      </td>
-                      <td className="px-5 py-4 text-right">
-                        <ActionsMenu
-                          actions={[
-                            {
-                              label: "Excluir",
-                              danger: true,
-                              onClick: () => handleDelete(r.id),
-                            },
-                          ]}
+              {loading ? (
+                <TableSkeleton rows={5} cols={7} />
+              ) : (
+                <tbody>
+                  {items.length === 0 ? (
+                    <tr>
+                      <td colSpan={7}>
+                        <EmptyState
+                          title="Nenhuma conta a receber"
+                          description="Quando você registrar vendas a prazo, elas aparecem aqui."
                         />
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            )}
-          </table>
+                  ) : (
+                    items.map((r) => (
+                      <tr
+                        key={r.id}
+                        className={`border-b border-slate-100 text-sm ${
+                          r.status === "OVERDUE" ? "bg-red-50" : ""
+                        }`}
+                      >
+                        <td className="px-5 py-4">{r.id}</td>
+                        <td className="px-5 py-4">{r.customer}</td>
+                        <td className="px-5 py-4">{r.description}</td>
+                        <td className="px-5 py-4">
+                          {new Date(r.dueDate).toLocaleDateString("pt-BR")}
+                        </td>
+
+                        <td className="px-5 py-4">{formatMoney(r.amount)}</td>
+                        <td className="px-5 py-4">
+                          <Badge
+                            variant={
+                              r.status === "RECEIVED"
+                                ? "success"
+                                : r.status === "OVERDUE"
+                                  ? "danger"
+                                  : "warning"
+                            }
+                          >
+                            {r.status === "RECEIVED"
+                              ? "Recebido"
+                              : r.status === "OVERDUE"
+                                ? "Vencido"
+                                : "Pendente"}
+                          </Badge>
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <ActionsMenu
+                            actions={[
+                              {
+                                label: "Excluir",
+                                danger: true,
+                                onClick: () => handleDelete(r.id),
+                              },
+                            ]}
+                          />
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              )}
+            </table>
+          </div>
         </CardContent>
       </Card>
 
