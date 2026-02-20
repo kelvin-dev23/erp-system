@@ -54,6 +54,7 @@ export function Orders() {
     mutationFn: createOrder,
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ["orders"] });
+      await qc.invalidateQueries({ queryKey: ["dashboard"] });
       setOpen(false);
 
       toast({
@@ -75,6 +76,7 @@ export function Orders() {
     mutationFn: deleteOrder,
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ["orders"] });
+      await qc.invalidateQueries({ queryKey: ["dashboard"] });
 
       toast({
         variant: "info",
@@ -97,6 +99,7 @@ export function Orders() {
 
     onSuccess: async (_data, vars) => {
       await qc.invalidateQueries({ queryKey: ["orders"] });
+      await qc.invalidateQueries({ queryKey: ["dashboard"] });
 
       toast({
         variant:

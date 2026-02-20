@@ -29,11 +29,6 @@ const STORAGE_KEY = "erp_orders_v1";
 function seed(): Order[] {
   return [];
 }
-function randomDateLastDays(days: number) {
-  const now = Date.now();
-  const diff = Math.floor(Math.random() * days) * 24 * 60 * 60 * 1000;
-  return new Date(now - diff).toISOString();
-}
 
 
 function load(): Order[] {
@@ -126,7 +121,7 @@ export async function createOrder(input: CreateOrderInput): Promise<Order> {
     status: input.status,
     items: orderItems,
     total,
-    createdAt: randomDateLastDays(30),
+   createdAt: new Date().toISOString(),
 
   };
 
